@@ -1,2 +1,2 @@
 # todolist
-to-do list with login and notification system
+to-do list with login system

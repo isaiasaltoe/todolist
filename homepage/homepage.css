@@ -1,0 +1,96 @@
+body{   
+    background-color: #1A1A1A;
+    margin-left: auto;
+    margin-right: auto;
+    margin: 0;
+}
+
+.corpo{
+    margin-top:30vh;
+    height: 40vh;
+    width: 46.875vw;
+    margin-left: 9.2vw;
+}
+
+.corpo h1{
+    color: #E5E5E5;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size:5vw;
+    margin-bottom: 0px;
+}
+
+.corpo p{
+    color: #BBBBBB;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size:3.6vh;
+    margin-top: 2vh;
+}
+
+.botao{
+    display: flex;
+    background-color:#E5E5E5;
+    height: 6.2vh;
+    width: 15.9vw;
+    border-radius: 2vh;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.botao h1{
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.5344vw;
+    margin-top: 0px;
+    color: #1A1A1A;
+}
+
+
+.contato{
+    
+    width: 70vw;
+    height: 64vh;
+    margin-top: 70vh;
+    text-decoration: none;
+}
+
+.contato h1{
+    color: #E5E5E5;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size:5vw;
+    margin-bottom: 0px;
+}
+
+.contato p{
+    color: #BBBBBB;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size:3.6vh;
+    margin: 0px;
+}
+
+.contato h2{
+    color:#BBBBBB;
+    font-size: 2.6vw;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    text-decoration: none;
+}
+
+a{
+    text-decoration: none;
+    color:#BBBBBB;
+}
+
+.botao a{
+    color: #1A1A1A;
+}

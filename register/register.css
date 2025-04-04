@@ -1,0 +1,93 @@
+body{   
+    background-color: #1A1A1A;
+    margin-left: auto;
+    margin-right: auto;
+    margin: 0;
+}
+
+a{
+    text-decoration: none;
+    color:#BBBBBB;
+}
+
+.formulario{
+    width:28.49vw;
+    height:54vh;
+    margin-left: 35.729vw;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.formulario h1{
+    color: #E5E5E5;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size:2.604vw;
+}
+
+.formulario h2{
+    color: #E5E5E5;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.563vw;
+    display: flex;
+    justify-content: center;
+}
+
+.formulario input{
+    background-color:#1A1A1A;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-color: white;
+    font-size: 1.563vw;
+    color: #E5E5E5;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+}
+
+.formulario input::placeholder{
+    color: #E5E5E5;
+}
+
+.botao{
+    display: flex;
+    background-color:#E5E5E5;
+    height: 6.2vh;
+    width: 15.9vw;
+    border-radius: 2vh;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+
+}
+
+.botao h1{
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 1.5344vw;
+    margin-top: 0px;
+    color: #1A1A1A;
+    margin-bottom: 0px;
+}
+
+p{
+    color: #E5E5E5;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1vw;
+    display: flex;
+    margin: left;
+    margin-top: -10px;
+    margin-left: 4.7vw;
+}
+
+.formulario a{
+    color:#E5E5E5;
+    text-decoration: underline;
+}
