@@ -1,0 +1,43 @@
+body{   
+    background-color: #1A1A1A;
+    margin-left: auto;
+    margin-right: auto;
+    margin: 0;
+    
+}
+
+a {
+    text-decoration: none;
+    color: #BBBBBB;
+}
+
+.logo h1{
+    color: #E5E5E5;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size:2.604vw;
+    margin-bottom: 0px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5vw;
+}
+
+.todo{
+    width: 46.302vw;
+    height: 109vh;
+    background-color: #282828;
+    border-radius: 50px;
+    float: left;
+    margin-left: 2vw;
+}
+
+.done{
+    width: 46.302vw;
+    height: 109vh;
+    background-color: #282828;
+    border-radius: 50px;
+    margin-right: 2vw;
+    float: right;
+}

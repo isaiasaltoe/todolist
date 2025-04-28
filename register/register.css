@@ -62,18 +62,29 @@ a{
     align-items: center;
     justify-content: center;
     margin: auto;
+    transition: transform 0.2s ease;
+    border: none;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 1.5344vw;
 
 }
 
 .botao h1{
     font-family: "Poppins", sans-serif;
-    font-weight: 700;
+    font-weight: 500;
     font-style: normal;
     font-size: 1.5344vw;
     margin-top: 0px;
     color: #1A1A1A;
     margin-bottom: 0px;
 }
+
+.botao:hover{
+    transform: scale(1.05);
+}
+
 
 p{
     color: #E5E5E5;
@@ -91,3 +102,4 @@ p{
     color:#E5E5E5;
     text-decoration: underline;
 }
+

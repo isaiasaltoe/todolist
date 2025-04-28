@@ -22,24 +22,22 @@
         <h1>
             start the experience
         </h1>
-        <h2>
-            <input type="text" placeholder="username*" >
-        </h2>
-        <h2>
-            <input type="password" placeholder="password*" >
-        </h2>
-        <h2>
-            <input type="email" placeholder="email*" >
-        </h2>
-        <p> 
-            already had a account? <a href="http://localhost/todolist/login/login.html"> sign in</a>
-        </p>
-        
-        <div class="botao">
-            <h1>
-                sign up
-            </h1>
-        </div>
+        <form class="" action="processa_usuario.php" method="post"> 
+            <h2>
+                <input type="text" placeholder="username*" id="username" class="form-control" name="username">
+            </h2>
+            <h2>
+                <input type="password" placeholder="password*" id="password" class="form-control" name="password">
+            </h2>
+            <h2>
+                <input type="email" placeholder="email*" id="email" class="form-control" name="email">
+            </h2>
+            <p> 
+                already had a account? <a href="http://localhost/todolist/login/login.html"> sign in</a>
+            </p>
+            
+            <button type="submit" name="enviarDados" class="botao">sign up</button>
+        </form>
     </div>
 </body>
 </html>

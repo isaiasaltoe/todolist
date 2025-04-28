@@ -28,7 +28,20 @@
     margin-right: 1.4vw;
 }
 
+.navbar a:hover{
+    color:#838383;;
+}
+
 .navbar{
     display: flex;
 }
 
+a{
+    text-decoration: none;
+    color:#BBBBBB;
+    
+}
+
+a:hover{
+    color: white;
+}
