@@ -1,0 +1,9 @@
+<div class="container ">
+  <% @tasks.each do |task| %>
+  <div class="container rounded-4 shadow-lg px-3 py-1 mb-5">
+    <h2 class="m-0"><%=task.tittle%></h2>
+    <p><%=task.body%></p>
+    <%=link_to "teste", task_path%>
+  </div>
+  <%end%>
+</div>
