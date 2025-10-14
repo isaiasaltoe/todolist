@@ -23,12 +23,26 @@
   </head>
 
   <body>
-    <div class="bg-danger  mb-4 p-2 text-center">
-      <div class="container text-center"><%= link_to "Home Page", root_path, class: 'link-light link-underline-opacity-0 link-underline-opacity-100-hover  h-4 ' %></div>
-      <p class="lead fw-semibold text-white">Simple and easy todo-list :)</p>
+    <div class="bg-danger  mb-4 p-2 d-flex justify-content-around align-items-center">
+      <p class="d-flex align-items-center mb-0"><%=link_to "Home Page", root_path, class: 'link-light link-underline-opacity-0 link-underline-opacity-100-hover h-4 d-flex '%>
+      </p>
+      <% if user_signed_in? %>
+        <h2 class="fw-semibold text-white">
+          Welcome back, <%= current_user.email.split('@').first%> :)
+        </h2>  
+      <%else%>
+        <h2 class="fw-semibold text-white">
+          Simple and easy todo-list :)
+        </h2>  
+      <%end%>
 
+        <%if user_signed_in? %>
+        <%= button_to "Logout", destroy_user_session_path, method: :delete, class:"btn btn-link link-light link-underline-opacity-0 link-underline-opacity-100-hover h-4 d-flex " %>
+        <%else%>
+        <%= button_to "Login/Create Account", new_user_registration_path, method: :get, class:"btn btn-link link-light link-underline-opacity-0 link-underline-opacity-100-hover h-4 d-flex " %>
+        <%end%>
     </div>
-    <div class="container">
+    <div class="container vh-100">
       <%= yield %>
     </div>
     <footer class="bg-danger text-white text-center mt-5 p-2 mt-auto">
