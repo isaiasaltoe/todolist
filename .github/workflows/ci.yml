@@ -76,12 +76,16 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
-          - 5422:5432
+          - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev node-gyp pkg-config python-is-python3 google-chrome-stable
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            build-essential git libpq-dev libyaml-dev node-gyp pkg-config python-is-python3 \
+            chromium-browser chromedriver
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -100,8 +104,16 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5422
-        run: bin/rails db:test:prepare test test:system
+          # Use 127.0.0.1 and the default Postgres port. Include a database name to avoid
+          # ambiguous connection issues in Rails' test setup.
+          DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/todolist_test
+        run: |
+          # Create and prepare the test database and run the test suites.
+          set -e
+          bin/rails db:create RAILS_ENV=test || true
+          bin/rails db:schema:load RAILS_ENV=test
+          bin/rails test
+          bin/rails test:system
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
