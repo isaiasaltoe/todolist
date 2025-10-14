@@ -1,9 +1,23 @@
 <div class="container ">
+  <div class="container text-center">
+    <p class="d-inline-block">
+      <%=link_to "New Task", new_task_path, class:"link-danger link-underline-opacity-0 link-underline-opacity-100-hover h2 text-center fw-semibold"%>
+    </p>
+  </div>
+
+
   <% @tasks.each do |task| %>
-  <div class="container rounded-4 shadow-lg px-3 py-1 mb-5">
-    <h2 class="m-0"><%=task.tittle%></h2>
-    <p><%=task.body%></p>
-    <%=link_to "teste", task_path%>
+  <div class="container rounded-4 shadow-lg px-3 py-1 pt-3 mb-5 d-flex align-items-center scalee">
+    <div class="container">
+      <h2 class="m-0"><%=task.tittle%></h2>
+      <p><%=task.body%></p>
+      <p>Weight: <%=task.weight%></p>
+    </div>
+    <div class="buttons gap-2 d-flex fs-6 align-items-center">
+      <%=link_to "Details", task_path(task), class:"link-danger link-underline-opacity-0 link-underline-opacity-100-hover"%>
+      <%=button_to "Delete", task, method: :delete, data: { turbo_confirm: "Are you sure?"}, class:"btn btn-link link-danger link-underline-opacity-0 link-underline-opacity-100-hover"%>
+    </div>
   </div>
   <%end%>
+
 </div>

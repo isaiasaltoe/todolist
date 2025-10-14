@@ -1,32 +1,40 @@
 <%= form_with(model: task) do |form| %>
-  <% if task.errors.any? %>
+ 
+
+  <div class="d-flex justify-content-center">
+    <div class="text-center w-50 border border-5 bg-danger  border-danger rounded-4 shadow-lg py-4">
+      <div class="container d-flex justify-content-center align-items-center gap-5">
+        <div class="d-block">
+          <%= form.label :tittle, class: "lead text-white d-block fw-semibold" %>
+          <%= form.text_field :tittle, class:"border-0 rounded-1" %>
+        </div>
+        <div class="d-block">
+          <%= form.label :weight, class: "lead d-block text-white fw-semibold"  %>
+          <%= form.number_field :weight, class:"border-0 rounded-1" %>
+        </div>
+      </div>
+      <div class="mt-4 d-block">
+        <%= form.label :body, class: "lead d-block text-white fw-semibold" %>
+        <%= form.textarea :body , class:"border-0 rounded-1 w-75 pb-5" %>
+      </div>
+      
+      <div class="mt-3 scalee">
+        <%= form.submit (task.persisted? ? "Update" : "Create"), class:"border-0 bg-white rounded p-2 shadow-lg fw-semibold"%>
+      </div>
+    </div>
+  </div>
+
+   <% if task.errors.any? %>
     <div style="color: red">
-      <h2><%= pluralize(task.errors.count, "error") %> prohibited this task from being saved:</h2>
+      <p class="h5 mt-5" ><%= pluralize(task.errors.count, "error") %> prohibited this task from being saved:</p>
 
       <ul>
         <% task.errors.each do |error| %>
-          <li><%= error.full_message %></li>
+          <p class="h6">
+            <li><%= error.full_message %></li>
+          </p>
         <% end %>
       </ul>
     </div>
   <% end %>
-
-  <div>
-    <%= form.label :tittle, style: "display: block" %>
-    <%= form.text_field :tittle %>
-  </div>
-
-  <div>
-    <%= form.label :body, style: "display: block" %>
-    <%= form.textarea :body %>
-  </div>
-
-  <div>
-    <%= form.label :weight, style: "display: block" %>
-    <%= form.number_field :weight %>
-  </div>
-
-  <div>
-    <%= form.submit %>
-  </div>
 <% end %>

@@ -1,11 +1,11 @@
 <% content_for :title, "New task" %>
 
-<h1>New task</h1>
+<h1 class="text-center mb-5">New task</h1>
 
 <%= render "form", task: @task %>
 
 <br>
 
-<div>
-  <%= link_to "Back to tasks", tasks_path %>
+<div class="text-center">
+   <%= link_to "Back to tasks", tasks_path, class:"btn btn-link link-danger link-underline-opacity-0 link-underline-opacity-100-hover" %>
 </div>

@@ -23,16 +23,15 @@
   </head>
 
   <body>
-    <div class="bg-danger text-white mb-4 p-2 text-center">
-      <%= link_to root_path, class: 'text-white text-decoration-none' do %>
-      <h1 class="fs-8 fw-semibold">Home Page</h1>
-      <%end%>
-      <p class="lead">Simple and easy todo-list :)</p>
+    <div class="bg-danger  mb-4 p-2 text-center">
+      <div class="container text-center"><%= link_to "Home Page", root_path, class: 'link-light link-underline-opacity-0 link-underline-opacity-100-hover  h-4 ' %></div>
+      <p class="lead fw-semibold text-white">Simple and easy todo-list :)</p>
+
     </div>
     <div class="container">
       <%= yield %>
     </div>
-    <footer class="bg-danger text-white text-center mt-5 p-2">
+    <footer class="bg-danger text-white text-center mt-5 p-2 mt-auto">
       Copyright @<a target="_blank" href="https://www.linkedin.com/in/isaiasaltoe/" class="text-white">isaiasaltoe</a> <%=Date.current.year%>.
     </footer>
   </body>

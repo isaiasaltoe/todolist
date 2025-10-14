@@ -1,1 +1,14 @@
-<p>penis</p>
+<div class="container text-left shadow-lg rounded-3 p-3 d-flex justify-content-between">
+    <div class="container-infos">
+        <h1 class="container p-0 "><%=@task.tittle%></h1>
+        <p class="lead fs-4"><%=@task.body%></p>
+    
+    <div class="container  p-0 mt-5">
+        <p class="mb-0 fs-6">Created at <%=@task.created_at.strftime("%m/%d/%Y")%></p>
+        <p class="fs-6">Last update at <%=@task.updated_at.strftime("%m/%d/%Y")%></p>
+    </div>
+    </div>
+    <p >
+        <%= link_to '✏️', edit_task_path, class: "text-decoration-none" %>
+    </p>
+</div>

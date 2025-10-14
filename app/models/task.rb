@@ -1,8 +1,8 @@
 class Task < ApplicationRecord
     validates :tittle, :weight, presence: true
-
     validate :between_one_and_five
 
+   
     private
 
 

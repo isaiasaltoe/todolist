@@ -3,7 +3,7 @@ class TasksController < ApplicationController
 
   # GET /tasks or /tasks.json
   def index
-    @tasks = Task.all
+     @tasks = Task.order(weight: :desc)
   end
 
   # GET /tasks/1 or /tasks/1.json
@@ -55,6 +55,7 @@ class TasksController < ApplicationController
       format.html { redirect_to tasks_path, notice: "Task was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
+
   end
 
   private
