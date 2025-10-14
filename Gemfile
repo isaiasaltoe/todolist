@@ -64,5 +64,5 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem 'bootstrap', '~> 5.3.3'
-gem 'rails-i18n'
+gem "bootstrap", "~> 5.3.3"
+gem "rails-i18n"
