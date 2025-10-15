@@ -71,12 +71,8 @@ jobs:
           --health-retries=3
 
     steps:
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y \
-            build-essential git libpq-dev libyaml-dev pkg-config \
-            python-is-python3 google-chrome-stable
+      - name: Install system packages
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config python-is-python3 google-chrome-stable
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -87,31 +83,22 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-     
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
-     
-      - name: Install JavaScript dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          elif [ -f yarn.lock ]; then
-            yarn install --frozen-lockfile
-          fi
+      - name: Install JS dependencies
+        run: npm install
 
-    
+      - name: Build CSS (Bootstrap)
+        run: npm run build:css
+
       - name: Run tests
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
-        run: |
-          bin/rails db:test:prepare
-          bin/rails test
-          bin/rails test:system
+        run: bin/rails db:test:prepare test test:system
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
