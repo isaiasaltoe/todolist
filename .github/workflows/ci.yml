@@ -10,9 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
@@ -27,10 +24,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
       - name: Audit JS dependencies
         run: bin/importmap audit
 
@@ -67,15 +60,16 @@ jobs:
           --health-retries=5
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y \
             build-essential git libpq-dev libyaml-dev node-gyp pkg-config python-is-python3 unzip curl
-          google-chrome --version || echo "Chrome not found"
-          chromedriver --version || echo "Chromedriver not found"
-
-      - uses: actions/checkout@v4
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
+          ln -sf /usr/bin/chromium-chromedriver /usr/bin/chromedriver
 
       - uses: actions/setup-node@v4
         with:
@@ -88,7 +82,11 @@ jobs:
 
       - name: Wait for PostgreSQL to be ready
         run: |
-          until pg_isready -h postgres -U postgres; do
+          for i in {1..10}; do
+            if pg_isready -h postgres -U postgres; then
+              echo "Postgres is ready!"
+              break
+            fi
             echo "Waiting for postgres..."
             sleep 2
           done
@@ -96,10 +94,9 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@postgres:5432/todolist_test
+          DATABASE_URL: postgres://postgres:flamengo@postgres:5432/todolist_test
         run: |
           set -e
-          bin/rails db:create || true
           bin/rails db:schema:load
           bin/rails test
           bin/rails test:system
