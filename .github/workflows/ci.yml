@@ -88,11 +88,14 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install Yarn
+        run: npm install -g yarn
+
       - name: Install JS dependencies
-        run: npm install
+        run: yarn install
 
       - name: Build CSS (Bootstrap)
-        run: npm run build:css
+        run: yarn build:css
 
       - name: Run tests
         env:
