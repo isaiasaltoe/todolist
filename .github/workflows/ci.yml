@@ -24,8 +24,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Ensure gems installed
+        run: bundle install
+
       - name: Audit JS dependencies
-        run: bin/importmap audit
+        run: bundle exec bin/importmap audit
 
   lint:
     runs-on: ubuntu-latest
