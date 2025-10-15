@@ -13,10 +13,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+      - name: Install JavaScript dependencies
+        run: npm install
       - name: Run Brakeman
         run: bin/brakeman --no-pager
 
@@ -27,10 +30,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+      - name: Install JavaScript dependencies
+        run: npm install
       - name: Audit JS dependencies
         run: bin/importmap audit
 
@@ -41,10 +47,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+      - name: Install JavaScript dependencies
+        run: npm install
+      - name: Build CSS
+        run: bin/rails css:build
       - name: Lint code
         run: bin/rubocop -f github
 
@@ -56,7 +67,7 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres  # Corrigido: mudado para 'postgres' para combinar com a DATABASE_URL
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: todolist_test
         ports:
           - 5432:5432
@@ -78,11 +89,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+
+      - name: Install JavaScript dependencies
+        run: npm install
+
+      - name: Build CSS assets
+        run: bin/rails css:build
 
       - name: Wait for PostgreSQL
         run: |
@@ -120,7 +138,14 @@ jobs:
           echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
-          export CHROME_BIN=$(which google-chrome-stable)
+          
+          # Instalar Chromedriver
+          CHROME_VERSION=$(google-chrome-stable --version | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+' | head -1)
+          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+          wget -N https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+          unzip -o chromedriver_linux64.zip -d /usr/local/bin/
+          chmod +x /usr/local/bin/chromedriver
+          
           bin/rails test:system
 
       - name: Upload screenshots if tests fail
