@@ -56,7 +56,7 @@ jobs:
         image: postgres:16
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: flamengo
+          POSTGRES_PASSWORD: postgres  # Corrigido: mudado para 'postgres' para combinar com a DATABASE_URL
           POSTGRES_DB: todolist_test
         ports:
           - 5432:5432
@@ -67,13 +67,11 @@ jobs:
           --health-retries=5
 
     steps:
-      - name: Install dependencies
+      - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y \
             build-essential git libpq-dev libyaml-dev node-gyp pkg-config python-is-python3 unzip curl
-          google-chrome --version || echo "Chrome not found"
-          chromedriver --version || echo "Chromedriver not found"
 
       - uses: actions/checkout@v4
 
@@ -86,22 +84,43 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Wait for PostgreSQL to be ready
+      - name: Wait for PostgreSQL
         run: |
-          until pg_isready -h postgres -U postgres; do
-            echo "Waiting for postgres..."
-            sleep 2
+          for i in {1..10}; do
+            if pg_isready -h localhost -U postgres; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... ($i/10)"
+            sleep 3
           done
+
+      - name: Setup test database
+        env:
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/todolist_test
+        run: |
+          bin/rails db:create
+          bin/rails db:schema:load
 
       - name: Run tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@postgres:5432/todolist_test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/todolist_test
         run: |
-          set -e
-          bin/rails db:create || true
-          bin/rails db:schema:load
           bin/rails test
+
+      - name: Run system tests
+        env:
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/todolist_test
+        run: |
+          # Instalar Chrome e Chromedriver para system tests
+          curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          export CHROME_BIN=$(which google-chrome-stable)
           bin/rails test:system
 
       - name: Upload screenshots if tests fail
