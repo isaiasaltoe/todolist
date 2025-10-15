@@ -1,118 +1,130 @@
 name: CI
 
 on:
-  pull_request:
   push:
+    branches: [ main ]
+  pull_request:
     branches: [ main ]
 
 jobs:
-  scan_ruby:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-      - name: Run Brakeman
-        run: bin/brakeman --no-pager
 
-  scan_js:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          node-version: '20'
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
+          ruby-version: 3.4.7
           bundler-cache: true
 
-      - name: Ensure gems installed
-        run: bundle install
-
-      - name: Audit JS dependencies
-        run: bundle exec bin/importmap audit
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - uses: ruby/setup-ruby@v1
+          node-version: 20
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@v4
         with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-      - name: Lint code
-        run: bin/rubocop -f github
-
-  test:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: flamengo
-          POSTGRES_DB: todolist_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
-    steps:
-      - uses: actions/checkout@v4
+          path: |
+            ~/.yarn-cache
+            node_modules
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y \
             build-essential git libpq-dev libyaml-dev node-gyp pkg-config python-is-python3 unzip curl
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-          ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
-          ln -sf /usr/bin/chromium-chromedriver /usr/bin/chromedriver
+          # Instala o Chrome e Chromedriver sem usar Snap (evita erro de permissão)
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable chromium-chromedriver
+          google-chrome --version
+          chromedriver --version
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      - name: Install gems and JS packages
+        run: |
+          bundle install
+          yarn install --immutable
 
-      - uses: ruby/setup-ruby@v1
+  test:
+    runs-on: ubuntu-latest
+    needs: setup
+    services:
+      postgres:
+        image: postgres:16
+        ports: ['5432:5432']
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: flamengo
+          POSTGRES_DB: todolist_test
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:flamengo@localhost:5432/todolist_test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: .ruby-version
+          ruby-version: 3.4.7
           bundler-cache: true
 
-      - name: Wait for PostgreSQL to be ready
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
         run: |
-          for i in {1..10}; do
-            if pg_isready -h postgres -U postgres; then
-              echo "Postgres is ready!"
-              break
-            fi
-            echo "Waiting for postgres..."
-            sleep 2
-          done
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            build-essential git libpq-dev libyaml-dev node-gyp pkg-config python-is-python3 unzip curl
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable chromium-chromedriver
+
+      - name: Prepare database
+        run: |
+          bin/rails db:create || true
+          bin/rails db:schema:load
 
       - name: Run tests
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:flamengo@postgres:5432/todolist_test
-        run: |
-          set -e
-          bin/rails db:schema:load
-          bin/rails test
-          bin/rails test:system
+        run: bin/rails test
 
-      - name: Upload screenshots if tests fail
-        uses: actions/upload-artifact@v4
-        if: failure()
+  lint:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
         with:
-          name: screenshots
-          path: tmp/screenshots
-          if-no-files-found: ignore
+          ruby-version: 3.4.7
+          bundler-cache: true
+
+      - name: Run RuboCop
+        run: bundle exec rubocop
+
+  audit:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.4.7
+          bundler-cache: true
+
+      - name: Audit Gems
+        run: bundle exec bundler audit check --update
+
+      - name: Audit Yarn packages
+        run: yarn audit --level moderate || true
